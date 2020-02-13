@@ -17,6 +17,32 @@ const read = async (req, res) => {
 
 /**
  *
+ * @route GET api/v1/user/:userID
+ * @description Get one user
+ * @access Public
+ * @param {Object} req
+ * @param {Object} res
+ */
+const single = async (req, res) => {
+  const { userID } = req.params
+
+  try {
+    const user = await User.findById(userID).select('-password')
+    res.status(200).json({
+      method: req.method,
+      message: 'User found',
+      user: user
+    })
+  } catch (error) {
+    res.status(404).json({
+      method: req.method,
+      message: 'No users Found'
+    })
+  }
+}
+
+/**
+ *
  * @route POST api/v1/users/register
  * @description Register a new user
  * @access Public
@@ -67,8 +93,90 @@ const login = async (req, res) => {
   }
 }
 
+/**
+ *
+ * @route PATCH api/v1/users/:userID
+ * @description Update user
+ * @access Public
+ * @param {Object} req
+ * @param {Object} res
+ */
+const update = async (req, res) => {
+  const { userID } = req.params
+  const updated = {}
+
+  for (const ops of req.body) {
+    console.log(ops)
+    if (ops.propName === 'password' || ops.propName === '_id') {
+      return res.status(403).json({
+        method: req.method,
+        message: 'Not allowed',
+        id: userID
+      })
+    }
+    updated[ops.propName] = ops.value
+  }
+
+  try {
+    const update = await User.updateOne({ _id: userID }, { $set: updated })
+    if (update.nModified) {
+      res.status(200).json({
+        method: req.method,
+        message: 'Updated user',
+        id: userID
+      })
+    } else {
+      res.status(400).json({
+        method: req.method,
+        message: 'Fail to update user',
+        id: userID
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error
+    })
+  }
+}
+
+/**
+ *
+ * @route Delete api/v1/users/:userID
+ * @description Delete one user
+ * @access Public
+ * @param {Object} req
+ * @param {Object} res
+ */
+const remove = async (req, res) => {
+  const { userID } = req.params
+
+  try {
+    const deleteUser = await User.remove({ _id: userID })
+    if (deleteUser.deletedCount) {
+      res.status(200).json({
+        message: 'Deleted User',
+        id: userID
+      })
+    } else {
+      res.status(404).json({
+        message: 'No user to delete',
+        id: userID
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Internal error',
+      error: error
+    })
+  }
+}
+
 module.exports = {
   read,
+  single,
   register,
-  login
+  login,
+  update,
+  remove
 }

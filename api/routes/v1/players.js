@@ -10,7 +10,7 @@ const {
 
 router.get('/', read)
 
-router.post('/add', add)
+router.post('/', add)
 
 router.get('/:playerID', single)
 

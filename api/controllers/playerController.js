@@ -10,9 +10,19 @@ const Player = require('../models/Player')
 const read = async (req, res) => {
   const players = await Player.find().select('-__v').sort('name')
   if (players >= 0) return res.status(404).json({ message: 'No players stored' })
+
   res.status(200).json({
     method: req.method,
-    players: players
+    count: players.length,
+    players: players.map(player => ({
+      name: player.name,
+      origin: player.origin,
+      club: player.club,
+      position: player.position,
+      contractTo: player.contractTo,
+      links: linksObject(req, player)
+    })
+    )
   })
 }
 
@@ -31,9 +41,11 @@ const add = async (req, res) => {
     const newPlayer = new Player(body)
     const player = await newPlayer.save()
 
-    res.status(200).json({
+    res.status(201).json({
       method: req.method,
-      createdPlayer: player
+      message: 'Player created successfully',
+      createdPlayer: player,
+      links: linksObject(req, player)
     })
   } catch (error) {
     res.status(500).json({
@@ -53,13 +65,13 @@ const add = async (req, res) => {
  */
 const single = async (req, res) => {
   const { playerID } = req.params
-
   try {
-    const player = await Player.findById(playerID)
+    const player = await Player.findById(playerID).select('-__v')
     res.status(200).json({
       method: req.method,
       message: 'Player found',
-      getPlayer: player
+      getPlayer: player,
+      links: linksObject(req, playerID)
     })
   } catch (error) {
     res.status(404).json({
@@ -91,13 +103,15 @@ const update = async (req, res) => {
       res.status(200).json({
         method: req.method,
         message: 'Updated player',
-        id: playerID
+        id: playerID,
+        links: linksObject(req, playerID)
       })
     } else {
       res.status(400).json({
         method: req.method,
-        message: 'Did not update player',
-        id: playerID
+        message: 'Fail to update player',
+        id: playerID,
+        links: linksObject(req, playerID)
       })
     }
   } catch (error) {
@@ -120,16 +134,18 @@ const remove = async (req, res) => {
   const { playerID } = req.params
 
   try {
-    const deletePlayer = await Player.remove({ _id: playerID })
+    const deletePlayer = await Player.deleteOne({ _id: playerID })
     if (deletePlayer.deletedCount) {
       res.status(200).json({
         message: 'Deleted player',
-        id: playerID
+        id: playerID,
+        links: linksObject(req, playerID)
       })
     } else {
       res.status(404).json({
         message: 'No player to delete',
-        id: playerID
+        id: playerID,
+        links: linksObject(req, playerID)
       })
     }
   } catch (error) {
@@ -139,6 +155,30 @@ const remove = async (req, res) => {
     })
   }
 }
+
+const linksObject = (req, data) => ({
+  self: req.headers.host + req.baseUrl + typeof data === 'number' ? '/' + data : '',
+  view_all: {
+    url: req.headers.host + req.baseUrl,
+    method: 'GET'
+  },
+  view: {
+    url: req.headers.host + req.baseUrl + '/' + (isNaN(data) ? data._id : data),
+    method: 'GET'
+  },
+  add: {
+    url: req.headers.host + req.baseUrl,
+    method: 'POST'
+  },
+  delete: {
+    url: req.headers.host + req.baseUrl + '/' + data._id,
+    method: 'DELETE'
+  },
+  update: {
+    url: req.headers.host + req.baseUrl + '/' + data._id,
+    method: 'PATCH'
+  }
+})
 
 module.exports = {
   read,
