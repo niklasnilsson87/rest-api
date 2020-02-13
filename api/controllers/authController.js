@@ -10,8 +10,8 @@ const { sign } = require('../../lib/jwt')
  * @param {Object} res
  */
 const read = async (req, res) => {
-  const users = await User.find({}).select('-password').select('-__v')
-  if (!users) return res.status(404).json({ message: 'No users stored' })
+  const users = await User.find().select('-password').select('-__v')
+  if (users >= 0) return res.status(404).json({ message: 'No users stored' })
   res.status(200).json({ users: users })
 }
 
@@ -32,11 +32,7 @@ const register = async (req, res) => {
   if (user) return res.status(400).json({ message: 'User exist, Email must be unique' })
 
   try {
-    const newUser = new User({
-      username,
-      password,
-      email
-    })
+    const newUser = new User(req.body)
 
     await newUser.save()
     res.status(201).json({ message: 'Successful Registration' })

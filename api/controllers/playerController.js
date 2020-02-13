@@ -1,3 +1,4 @@
+const Player = require('../models/Player')
 /**
  *
  * @route GET api/v1/players
@@ -7,7 +8,12 @@
  * @param {Object} res
  */
 const read = async (req, res) => {
-  res.status(200).json({ message: 'view players' })
+  const players = await Player.find().select('-__v').sort('name')
+  if (players >= 0) return res.status(404).json({ message: 'No players stored' })
+  res.status(200).json({
+    method: req.method,
+    players: players
+  })
 }
 
 /**
@@ -19,17 +25,22 @@ const read = async (req, res) => {
  * @param {Object} res
  */
 const add = async (req, res) => {
-  const { name, club, position, contractTo } = req.body
-  const player = {
-    name,
-    club,
-    position,
-    contractTo
+  const { body } = req
+
+  try {
+    const newPlayer = new Player(body)
+    const player = await newPlayer.save()
+
+    res.status(200).json({
+      method: req.method,
+      createdPlayer: player
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Unsuccessful Registration for player',
+      error: error
+    })
   }
-  res.status(200).json({
-    message: 'Created a new player',
-    createdPlayer: player
-  })
 }
 
 /**
@@ -43,10 +54,19 @@ const add = async (req, res) => {
 const single = async (req, res) => {
   const { playerID } = req.params
 
-  res.status(200).json({
-    message: 'You passed an ID',
-    id: playerID
-  })
+  try {
+    const player = await Player.findById(playerID)
+    res.status(200).json({
+      method: req.method,
+      message: 'Player found',
+      getPlayer: player
+    })
+  } catch (error) {
+    res.status(404).json({
+      method: req.method,
+      message: 'No players Found'
+    })
+  }
 }
 
 /**
@@ -59,11 +79,33 @@ const single = async (req, res) => {
  */
 const update = async (req, res) => {
   const { playerID } = req.params
+  const updated = {}
 
-  res.status(200).json({
-    message: 'Updated player',
-    id: playerID
-  })
+  for (const ops of req.body) {
+    updated[ops.propName] = ops.value
+  }
+
+  try {
+    const update = await Player.update({ _id: playerID }, { $set: updated })
+    if (update.nModified) {
+      res.status(200).json({
+        method: req.method,
+        message: 'Updated player',
+        id: playerID
+      })
+    } else {
+      res.status(400).json({
+        method: req.method,
+        message: 'Did not update player',
+        id: playerID
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      error: error
+    })
+  }
 }
 
 /**
@@ -77,10 +119,25 @@ const update = async (req, res) => {
 const remove = async (req, res) => {
   const { playerID } = req.params
 
-  res.status(200).json({
-    message: 'Deleted player',
-    id: playerID
-  })
+  try {
+    const deletePlayer = await Player.remove({ _id: playerID })
+    if (deletePlayer.deletedCount) {
+      res.status(200).json({
+        message: 'Deleted player',
+        id: playerID
+      })
+    } else {
+      res.status(404).json({
+        message: 'No player to delete',
+        id: playerID
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Internal error',
+      error: error
+    })
+  }
 }
 
 module.exports = {
