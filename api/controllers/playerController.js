@@ -1,57 +1,51 @@
 const Player = require('../models/Player')
+const Response = require('../responses/Response')
 /**
  *
  * @route GET api/v1/players
  * @description Get all players
- * @access Public
+ * @access Private
  * @param {Object} req
  * @param {Object} res
  */
 const read = async (req, res) => {
-  const players = await Player.find().select('-__v').sort('name')
-  if (players >= 0) return res.status(404).json({ message: 'No players stored' })
+  const players = await Player.find()
+    .select('-__v')
+    .select('-createdAt')
+    .select('-updatedAt')
+    .sort('name')
 
-  res.status(200).json({
-    method: req.method,
-    count: players.length,
-    players: players.map(player => ({
-      name: player.name,
-      origin: player.origin,
-      club: player.club,
-      position: player.position,
-      contractTo: player.contractTo,
-      links: linksObject(req, player)
-    })
-    )
-  })
+  if (players >= 0) return Response._404(res, req, 'No players stored')
+
+  Response._200(res, req, players)
 }
 
 /**
  *
  * @route POST api/v1/players/add
  * @description Create new player
- * @access Public
+ * @access Private
  * @param {Object} req
  * @param {Object} res
  */
 const add = async (req, res) => {
-  const { body } = req
+  const { body, user } = req
 
   try {
-    const newPlayer = new Player(body)
+    const newPlayer = new Player({
+      agent: user.id,
+      name: body.name,
+      origin: body.origin,
+      position: body.position,
+      club: body.club,
+      contractTo: body.contractTo
+    })
     const player = await newPlayer.save()
 
-    res.status(201).json({
-      method: req.method,
-      message: 'Player created successfully',
-      createdPlayer: player,
-      links: linksObject(req, player)
-    })
+    Response._201(res, req, 'Player created Successfully', player)
   } catch (error) {
-    res.status(500).json({
-      message: 'Unsuccessful Registration for player',
-      error: error
-    })
+    console.log(error)
+    Response._500(res, req, `Unsuccessful Registration: ${error}`)
   }
 }
 
@@ -59,25 +53,18 @@ const add = async (req, res) => {
  *
  * @route GET api/v1/players/:playerID
  * @description Get one player
- * @access Public
+ * @access Private
  * @param {Object} req
  * @param {Object} res
  */
 const single = async (req, res) => {
   const { playerID } = req.params
+
   try {
     const player = await Player.findById(playerID).select('-__v')
-    res.status(200).json({
-      method: req.method,
-      message: 'Player found',
-      getPlayer: player,
-      links: linksObject(req, playerID)
-    })
+    Response._200(res, req, player)
   } catch (error) {
-    res.status(404).json({
-      method: req.method,
-      message: 'No players Found'
-    })
+    Response._404(res, req, 'No players found')
   }
 }
 
@@ -85,40 +72,36 @@ const single = async (req, res) => {
  *
  * @route PATCH api/v1/players/:playerID
  * @description Update one player
- * @access Public
+ * @access Private
  * @param {Object} req
  * @param {Object} res
  */
 const update = async (req, res) => {
   const { playerID } = req.params
-  const updated = {}
 
-  for (const ops of req.body) {
-    updated[ops.propName] = ops.value
-  }
+  if (Array.isArray(req.body)) {
+    const updated = {}
 
-  try {
-    const update = await Player.update({ _id: playerID }, { $set: updated })
-    if (update.nModified) {
-      res.status(200).json({
-        method: req.method,
-        message: 'Updated player',
-        id: playerID,
-        links: linksObject(req, playerID)
-      })
-    } else {
-      res.status(400).json({
-        method: req.method,
-        message: 'Fail to update player',
-        id: playerID,
-        links: linksObject(req, playerID)
-      })
+    for (const ops of req.body) {
+      updated[ops.propName] = ops.value
     }
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({
-      error: error
-    })
+
+    try {
+      const update = await Player.updateOne(
+        { _id: playerID },
+        { $set: updated }
+      )
+
+      if (update.nModified) {
+        Response._200(res, req, playerID)
+      } else {
+        Response._400(res, req, 'Failed to update player')
+      }
+    } catch (error) {
+      Response._404(res, req, 'No player to update')
+    }
+  } else {
+    Response._400(res, req, 'Wrong JSON format')
   }
 }
 
@@ -126,7 +109,7 @@ const update = async (req, res) => {
  *
  * @route Delete api/v1/players/:playerID
  * @description Delete one player
- * @access Public
+ * @access Private
  * @param {Object} req
  * @param {Object} res
  */
@@ -136,49 +119,14 @@ const remove = async (req, res) => {
   try {
     const deletePlayer = await Player.deleteOne({ _id: playerID })
     if (deletePlayer.deletedCount) {
-      res.status(200).json({
-        message: 'Deleted player',
-        id: playerID,
-        links: linksObject(req, playerID)
-      })
+      Response._200(res, req, playerID)
     } else {
-      res.status(404).json({
-        message: 'No player to delete',
-        id: playerID,
-        links: linksObject(req, playerID)
-      })
+      Response._404(res, req, 'No player to delete')
     }
   } catch (error) {
-    res.status(500).json({
-      message: 'Internal error',
-      error: error
-    })
+    Response._500(res, req, `Unsuccessful delete: ${error}`)
   }
 }
-
-const linksObject = (req, data) => ({
-  self: req.headers.host + req.baseUrl + typeof data === 'number' ? '/' + data : '',
-  view_all: {
-    url: req.headers.host + req.baseUrl,
-    method: 'GET'
-  },
-  view: {
-    url: req.headers.host + req.baseUrl + '/' + (isNaN(data) ? data._id : data),
-    method: 'GET'
-  },
-  add: {
-    url: req.headers.host + req.baseUrl,
-    method: 'POST'
-  },
-  delete: {
-    url: req.headers.host + req.baseUrl + '/' + data._id,
-    method: 'DELETE'
-  },
-  update: {
-    url: req.headers.host + req.baseUrl + '/' + data._id,
-    method: 'PATCH'
-  }
-})
 
 module.exports = {
   read,

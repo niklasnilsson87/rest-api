@@ -1,5 +1,7 @@
 const User = require('../models/User')
+const Player = require('../models/Player')
 const { sign } = require('../../lib/jwt')
+const Response = require('../responses/Response')
 
 /**
  *
@@ -10,16 +12,20 @@ const { sign } = require('../../lib/jwt')
  * @param {Object} res
  */
 const read = async (req, res) => {
-  const users = await User.find().select('-password').select('-__v')
-  if (users >= 0) return res.status(404).json({ message: 'No users stored' })
-  res.status(200).json({ users: users })
+  const users = await User.find()
+    .select('-password')
+    .select('-__v')
+
+  if (users >= 0) return Response._404(res, 'No users stored')
+
+  Response._200(res, req, users)
 }
 
 /**
  *
  * @route GET api/v1/user/:userID
  * @description Get one user
- * @access Public
+ * @access Private
  * @param {Object} req
  * @param {Object} res
  */
@@ -27,17 +33,13 @@ const single = async (req, res) => {
   const { userID } = req.params
 
   try {
-    const user = await User.findById(userID).select('-password')
-    res.status(200).json({
-      method: req.method,
-      message: 'User found',
-      user: user
-    })
+    const user = await User
+      .findById(userID)
+      .select('-password')
+
+    Response._200(res, req, user)
   } catch (error) {
-    res.status(404).json({
-      method: req.method,
-      message: 'No users Found'
-    })
+    Response._404(res, 'No user found')
   }
 }
 
@@ -52,18 +54,22 @@ const single = async (req, res) => {
 const register = async (req, res) => {
   const { username, password, email } = req.body
 
-  if (!username || !email || !password) return res.status(400).json({ message: 'Please enter all fields' })
+  if (!username || !email || !password) {
+    return Response._400(res, 'Invalid request payload')
+  }
 
   const user = await User.findOne({ email })
-  if (user) return res.status(400).json({ message: 'User exist, Email must be unique' })
+  if (user) {
+    return Response._400(res, 'User exist, Email must be unique')
+  }
 
   try {
     const newUser = new User(req.body)
 
     await newUser.save()
-    res.status(201).json({ message: 'Successful Registration' })
+    Response._201(res, 'Successful registration', newUser)
   } catch (error) {
-    res.status(500).json({ message: `Unsuccessful Registration: ${error}` })
+    Response._500(res, `Unsuccessful Registration: ${error}`)
   }
 }
 
@@ -78,18 +84,20 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { username, password } = req.body
 
-  if (!username || !password) return res.status(400).json({ message: 'Please enter all fields' })
+  if (!username || !password) {
+    return Response._400(res, 'Please enter all fields')
+  }
 
   const user = await User.findOne({ username })
-  if (!user) return res.status(400).json({ message: 'Login failed' })
+  if (!user) return Response._400(res, 'Login failed')
 
   const result = await user.comparePassword(password)
 
   if (result && user) {
     const token = await sign(user)
-    res.status(200).json({ message: 'Successful login', token: token })
+    Response._200(res, 'Successful login', token)
   } else {
-    return res.status(401).json({ message: 'Invalid credentials' })
+    return Response._401(res, 'Invalid credentials')
   }
 }
 
@@ -97,7 +105,7 @@ const login = async (req, res) => {
  *
  * @route PATCH api/v1/users/:userID
  * @description Update user
- * @access Public
+ * @access Private
  * @param {Object} req
  * @param {Object} res
  */
@@ -106,13 +114,8 @@ const update = async (req, res) => {
   const updated = {}
 
   for (const ops of req.body) {
-    console.log(ops)
     if (ops.propName === 'password' || ops.propName === '_id') {
-      return res.status(403).json({
-        method: req.method,
-        message: 'Not allowed',
-        id: userID
-      })
+      return Response._403(res, req, 'Not allowed')
     }
     updated[ops.propName] = ops.value
   }
@@ -120,23 +123,13 @@ const update = async (req, res) => {
   try {
     const update = await User.updateOne({ _id: userID }, { $set: updated })
     if (update.nModified) {
-      res.status(200).json({
-        method: req.method,
-        message: 'Updated user',
-        id: userID
-      })
+      Response._200(res, req, userID)
     } else {
-      res.status(400).json({
-        method: req.method,
-        message: 'Fail to update user',
-        id: userID
-      })
+      Response._400(res, req, 'Fail to update user')
     }
   } catch (error) {
     console.log(error)
-    res.status(500).json({
-      error: error
-    })
+    Response._500(res, req, `Unsuccessful update: ${error}`)
   }
 }
 
@@ -144,7 +137,7 @@ const update = async (req, res) => {
  *
  * @route Delete api/v1/users/:userID
  * @description Delete one user
- * @access Public
+ * @access Private
  * @param {Object} req
  * @param {Object} res
  */
@@ -152,23 +145,15 @@ const remove = async (req, res) => {
   const { userID } = req.params
 
   try {
-    const deleteUser = await User.remove({ _id: userID })
+    const deleteUser = await User.deleteOne({ _id: userID })
+    await Player.deleteMany({ owner: userID })
     if (deleteUser.deletedCount) {
-      res.status(200).json({
-        message: 'Deleted User',
-        id: userID
-      })
+      Response._202(res, req, 'User deleted')
     } else {
-      res.status(404).json({
-        message: 'No user to delete',
-        id: userID
-      })
+      Response._404(res, req, 'No user to delete')
     }
   } catch (error) {
-    res.status(500).json({
-      message: 'Internal error',
-      error: error
-    })
+    Response._500(res, req, `Unsuccessful delete: ${error}`)
   }
 }
 

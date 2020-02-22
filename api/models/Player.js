@@ -7,6 +7,10 @@ const PlayerSchema = new mongoose.Schema({
     required: true,
     lowercase: true
   },
+  agent: {
+    type: String,
+    required: true
+  },
   origin: {
     type: String,
     required: true,
@@ -27,9 +31,10 @@ const PlayerSchema = new mongoose.Schema({
     required: false,
     default: 'Free agent'
   }
+}, {
+  timestamps: true
 })
 
 const Player = mongoose.model('Player', PlayerSchema)
 
-// Exports
 module.exports = Player

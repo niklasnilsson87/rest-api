@@ -29,6 +29,7 @@ app.use((req, res, next) => {
   next()
 })
 
+// app.use('/api', require('./api/routes/'))
 app.use('/api/v1/users', require('./api/routes/v1/users'))
 app.use('/api/v1/players', require('./api/routes/v1/players'))
 

@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const { verifyToken, verifyAgent } = require('../../../middlewares/verify')
 
 const {
   read,
@@ -8,14 +9,14 @@ const {
   remove
 } = require('../../controllers/playerController')
 
-router.get('/', read)
+router.get('/', verifyToken, read)
 
-router.post('/', add)
+router.post('/', verifyToken, add)
 
-router.get('/:playerID', single)
+router.get('/:playerID', verifyToken, verifyAgent, single)
 
-router.patch('/:playerID', update)
+router.patch('/:playerID', verifyToken, verifyAgent, update)
 
-router.delete('/:playerID', remove)
+router.delete('/:playerID', verifyToken, verifyAgent, remove)
 
 module.exports = router

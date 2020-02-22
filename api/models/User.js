@@ -3,10 +3,24 @@ mongoose.set('useCreateIndex', true)
 const bcrypt = require('bcrypt')
 
 const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, lowercase: true, index: { unique: true } },
-  password: { type: String, required: true },
-  email: { type: String, required: true }
-})
+  username: {
+    type: String,
+    required: true,
+    lowercase: true,
+    index: { unique: true }
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  }
+}, {
+  timestamps: true
+}
+)
 
 // validates that the password is at least 6 characters long
 UserSchema.path('password').validate((password) => { return password.length >= 6 },
