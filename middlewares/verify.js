@@ -36,10 +36,10 @@ const verifyToken = (req, res, next) => {
  * @param {Next} next
  */
 const verifyUser = (req, res, next) => {
-  const { userID } = req.params
+  const { agentID } = req.params
   const { user } = req
 
-  if (userID === user.id) {
+  if (agentID === user.id) {
     next()
   } else {
     Response._401(res, req, 'Authorazation denied')
@@ -60,7 +60,7 @@ const verifyAgent = async (req, res, next) => {
 
   const player = await Player.findById(playerID)
 
-  if (user === player.agent) {
+  if (user.id === player.agent) {
     next()
   } else {
     Response._401(res, req, 'Authorazation denied')

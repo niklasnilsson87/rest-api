@@ -1,52 +1,52 @@
-const User = require('../models/User')
+const Agent = require('../models/Agent')
 const Player = require('../models/Player')
 const { sign } = require('../../lib/jwt')
 const Response = require('../responses/Response')
 
 /**
  *
- * @route GET api/v1/users
- * @description Get all registered users
+ * @route GET api/v1/agents
+ * @description Get all registered agents
  * @access Public
  * @param {Object} req
  * @param {Object} res
  */
 const read = async (req, res) => {
-  const users = await User.find()
+  const agents = await Agent.find()
     .select('-password')
     .select('-__v')
 
-  if (users >= 0) return Response._404(res, 'No users stored')
+  if (agents >= 0) return Response._404(res, req, 'No agents stored')
 
-  Response._200(res, req, users)
+  Response._200(res, req, agents)
 }
 
 /**
  *
- * @route GET api/v1/user/:userID
- * @description Get one user
+ * @route GET api/v1/agent/:agentID
+ * @description Get one agent
  * @access Private
  * @param {Object} req
  * @param {Object} res
  */
 const single = async (req, res) => {
-  const { userID } = req.params
+  const { agentID } = req.params
 
   try {
-    const user = await User
-      .findById(userID)
+    const agent = await Agent
+      .findById(agentID)
       .select('-password')
 
-    Response._200(res, req, user)
+    Response._200(res, req, agent)
   } catch (error) {
-    Response._404(res, 'No user found')
+    Response._404(res, req, 'No agent found')
   }
 }
 
 /**
  *
- * @route POST api/v1/users/register
- * @description Register a new user
+ * @route POST api/v1/agents/register
+ * @description Register a new agent
  * @access Public
  * @param {Object} req
  * @param {Object} res
@@ -55,28 +55,27 @@ const register = async (req, res) => {
   const { username, password, email } = req.body
 
   if (!username || !email || !password) {
-    return Response._400(res, 'Invalid request payload')
+    return Response._400(res, req, 'Invalid request payload')
   }
 
-  const user = await User.findOne({ email })
-  if (user) {
-    return Response._400(res, 'User exist, Email must be unique')
-  }
+  const agent = await Agent.findOne({ email })
+  if (agent) return Response._400(res, req, 'Agent exist, Email must be unique')
 
   try {
-    const newUser = new User(req.body)
-
-    await newUser.save()
-    Response._201(res, 'Successful registration', newUser)
+    const newAgent = new Agent(req.body)
+    await newAgent.save()
+    newAgent.password = undefined
+    newAgent.__v = undefined
+    Response._201(res, req, 'Successful registration', newAgent)
   } catch (error) {
-    Response._500(res, `Unsuccessful Registration: ${error}`)
+    Response._500(res, req, `Unsuccessful Registration: ${error}`)
   }
 }
 
 /**
  *
- * @route POST api/v1/users/login
- * @description Try to login user and respond with token
+ * @route POST api/v1/agents/login
+ * @description Try to login agent and respond with token
  * @access Public
  * @param {Object} req
  * @param {Object} res
@@ -85,32 +84,32 @@ const login = async (req, res) => {
   const { username, password } = req.body
 
   if (!username || !password) {
-    return Response._400(res, 'Please enter all fields')
+    return Response._400(res, req, 'Please enter all fields')
   }
 
-  const user = await User.findOne({ username })
-  if (!user) return Response._400(res, 'Login failed')
+  const agent = await Agent.findOne({ username })
+  if (!agent) return Response._400(res, req, 'Login failed')
 
-  const result = await user.comparePassword(password)
+  const result = await agent.comparePassword(password)
 
-  if (result && user) {
-    const token = await sign(user)
-    Response._200(res, 'Successful login', token)
+  if (result && agent) {
+    const token = await sign(agent)
+    Response._200(res, req, token)
   } else {
-    return Response._401(res, 'Invalid credentials')
+    return Response._401(res, req, 'Invalid credentials')
   }
 }
 
 /**
  *
- * @route PATCH api/v1/users/:userID
- * @description Update user
+ * @route PATCH api/v1/agents/:agentID
+ * @description Update agent
  * @access Private
  * @param {Object} req
  * @param {Object} res
  */
 const update = async (req, res) => {
-  const { userID } = req.params
+  const { agentID } = req.params
   const updated = {}
 
   for (const ops of req.body) {
@@ -121,11 +120,11 @@ const update = async (req, res) => {
   }
 
   try {
-    const update = await User.updateOne({ _id: userID }, { $set: updated })
+    const update = await Agent.updateOne({ _id: agentID }, { $set: updated })
     if (update.nModified) {
-      Response._200(res, req, userID)
+      Response._200(res, req, agentID)
     } else {
-      Response._400(res, req, 'Fail to update user')
+      Response._400(res, req, 'Fail to update agent')
     }
   } catch (error) {
     console.log(error)
@@ -135,22 +134,22 @@ const update = async (req, res) => {
 
 /**
  *
- * @route Delete api/v1/users/:userID
- * @description Delete one user
+ * @route Delete api/v1/agents/:agentID
+ * @description Delete one agent
  * @access Private
  * @param {Object} req
  * @param {Object} res
  */
 const remove = async (req, res) => {
-  const { userID } = req.params
+  const { agentID } = req.params
 
   try {
-    const deleteUser = await User.deleteOne({ _id: userID })
-    await Player.deleteMany({ owner: userID })
-    if (deleteUser.deletedCount) {
-      Response._202(res, req, 'User deleted')
+    const deleteAgent = await Agent.deleteOne({ _id: agentID })
+    await Player.deleteMany({ owner: agentID })
+    if (deleteAgent.deletedCount) {
+      Response._202(res, req, 'Agent deleted')
     } else {
-      Response._404(res, req, 'No user to delete')
+      Response._404(res, req, 'No agent to delete')
     }
   } catch (error) {
     Response._500(res, req, `Unsuccessful delete: ${error}`)

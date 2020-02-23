@@ -9,10 +9,10 @@ router.post('/login', login)
 
 router.post('/register', register)
 
-router.get('/:userID', verifyToken, single)
+router.get('/:agentID', verifyToken, single)
 
-router.patch('/:userID', verifyToken, verifyUser, update)
+router.patch('/:agentID', verifyToken, verifyUser, update)
 
-router.delete('/:userID', verifyToken, verifyUser, remove)
+router.delete('/:agentID', verifyToken, verifyUser, remove)
 
 module.exports = router

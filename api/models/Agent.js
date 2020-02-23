@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 mongoose.set('useCreateIndex', true)
 const bcrypt = require('bcrypt')
 
-const UserSchema = new mongoose.Schema({
+const AgentSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
@@ -23,24 +23,24 @@ const UserSchema = new mongoose.Schema({
 )
 
 // validates that the password is at least 6 characters long
-UserSchema.path('password').validate((password) => { return password.length >= 6 },
+AgentSchema.path('password').validate((password) => { return password.length >= 6 },
   'The password must be of minimum length 6 characters.')
 
 // Hash the password
-UserSchema.pre('save', async function (next) {
-  const user = this
+AgentSchema.pre('save', async function (next) {
+  const agent = this
 
-  if (user.isModified('password') || user.isNew) {
-    const hashPwd = await bcrypt.hash(user.password, 12)
-    user.password = hashPwd
+  if (agent.isModified('password') || agent.isNew) {
+    const hashPwd = await bcrypt.hash(agent.password, 12)
+    agent.password = hashPwd
   }
   next()
 })
 
-UserSchema.methods.comparePassword = function (candidatePassword) {
+AgentSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password)
 }
 
-const User = mongoose.model('User', UserSchema)
+const Agent = mongoose.model('Agent', AgentSchema)
 
-module.exports = User
+module.exports = Agent

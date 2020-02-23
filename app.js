@@ -4,6 +4,7 @@ const mongoose = require('./config/mongoose')
 require('dotenv').config()
 
 const PORT = process.env.PORT || 3000
+const VERSION = process.env.VERSION
 
 const app = express()
 
@@ -30,8 +31,8 @@ app.use((req, res, next) => {
 })
 
 app.use('/api', require('./api/routes/root'))
-app.use('/api/v1/users', require('./api/routes/v1/users'))
-app.use('/api/v1/players', require('./api/routes/v1/players'))
+app.use(`/api/${VERSION}/agents`, require('./api/routes/v1/agents'))
+app.use(`/api/${VERSION}/players`, require('./api/routes/v1/players'))
 
 app.use((req, res, next) => {
   const error = new Error('Not Found')
