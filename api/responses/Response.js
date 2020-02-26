@@ -66,7 +66,7 @@ function links (req, id) {
       method: req.method
     },
     subscribe: {
-      url: `${req.protocol}://${req.headers.host}/api/hooks`,
+      url: `${req.protocol}://${req.headers.host}/api/v1/hooks`,
       methods: 'GET, POST, DELETE'
     }
   }
