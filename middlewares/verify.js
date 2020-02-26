@@ -61,7 +61,7 @@ const verifyAgent = async (req, res, next) => {
 
   const player = await Player.findById(playerID)
 
-  if (user.id === player.agent) {
+  if (user.username === player.agent) {
     next()
   } else {
     return Response._401(res, req, 'Authorazation denied')
