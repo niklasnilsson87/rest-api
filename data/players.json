@@ -1,5 +1,6 @@
 [
     {
+      "agent": "MartinDahlin",
       "name": "Alphonso Davies",
       "origin": "Canada",
       "position": "Left-Back",
@@ -7,6 +8,7 @@
       "contractTo": "30.06.2023"
     },
     {
+      "agent": "MartinDahlin",
       "name": "Christian Eriksen",
       "origin": "Denmark",
       "position": "Attacking Midfield",
@@ -14,6 +16,7 @@
       "contractTo": "30.06.2024"
     },
     {
+      "agent": "MartinDahlin",
       "name": "Bruno Fernandes",
       "origin": "Portugal",
       "position": "Attacking Midfield",
@@ -21,6 +24,7 @@
       "contractTo": "30.06.2025"
     },
     {
+      "agent": "MartinDahlin",
       "name": "Erling Haaland",
       "origin": "Norway",
       "position": "Centre-Forward",
@@ -28,6 +32,7 @@
       "contractTo": "30.06.2024"
     },
     {
+      "agent": "MartinDahlin",
       "name": "Neymar",
       "origin": "Brazil",
       "position": "Left-Winger",
@@ -35,6 +40,7 @@
       "contractTo": "30.06.2022"
     },
     {
+      "agent": "MinoRaiola",
       "name": "Antoine Griezmann",
       "origin": "France",
       "position": "Left-Winger",
@@ -42,6 +48,7 @@
       "contractTo": "30.06.2024"
     },
     {
+      "agent": "MinoRaiola",
       "name": "Alexander Isak",
       "origin": "Sweden",
       "position": "Centre-Forward",
@@ -49,6 +56,7 @@
       "contractTo": "30.06.2024"
     },
     {
+      "agent": "MinoRaiola",
       "name": "Robin Quaison",
       "origin": "Sweden",
       "position": "Centre-Forward",

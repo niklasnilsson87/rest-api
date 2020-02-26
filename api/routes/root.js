@@ -21,36 +21,36 @@ router.get('/', (req, res) => {
       },
       agents: {
         register: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/agents/register`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/agents/register`,
           method: 'POST',
           desc: 'Register: { username: <username>, password: <password>, email: <email> } (JSON format)'
         },
         login: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/agents/login`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/agents/login`,
           method: 'POST',
           desc: 'Login: { username: <username>, password: <password> } (JSON format), response: Token in payload'
         },
         read: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/agents`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/agents`,
           method: 'GET',
           desc: 'View all registered agents'
         },
         readSingle: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/agents/:id`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/agents/:id`,
           method: 'GET',
           desc: 'View single agent',
           access: 'Private',
           token: 'Required'
         },
         update: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/agents/:id`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/agents/:id`,
           method: 'PATCH',
           desc: 'Update: [ { propName: <property to change>, value: <newValue> } ], Add more objects in order to change muliple properties',
           access: 'Private',
           token: 'Required'
         },
         delete: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/agents/:id`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/agents/:id`,
           method: 'DELETE',
           desc: 'Delete user',
           access: 'Private',
@@ -59,35 +59,58 @@ router.get('/', (req, res) => {
       },
       players: {
         add: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/players`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/players`,
           method: 'POST',
           desc: 'Add: { name: <playerName>, origin: <origin>, position: <position>, club: <club>, contractTo: < ex. 2022-02-12> }',
           access: 'Private',
           token: 'Required'
         },
         read: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/players`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/players`,
           method: 'GET',
           desc: 'View all players'
         },
         readSingle: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/players/:id`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/players/:id`,
           method: 'GET',
           desc: 'View single player',
           access: 'Private',
           token: 'Required'
         },
         update: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/players/:id`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/players/:id`,
           method: 'PATCH',
           desc: 'Update: [ { propName: <property to change>, value: <newValue> } ], Add more objects in order to change muliple properties',
           access: 'Private',
           token: 'Required'
         },
         delete: {
-          url: `http://${req.headers.host}${req.originalUrl}${VERSION}/players/:id`,
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/players/:id`,
           method: 'DELETE',
           desc: 'Delete player',
+          access: 'Private',
+          token: 'Required'
+        }
+      },
+      hooks: {
+        add: {
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/hooks`,
+          method: 'POST',
+          desc: 'Add: { callbackUrl: <url> }',
+          access: 'Private',
+          token: 'Required'
+        },
+        read: {
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/hooks`,
+          method: 'GET',
+          desc: 'view all hooks',
+          access: 'Private',
+          token: 'Required'
+        },
+        delete: {
+          url: `http://${req.headers.host}${req.originalUrl}/${VERSION}/hooks/:id`,
+          method: 'DELETE',
+          desc: 'Delete hook',
           access: 'Private',
           token: 'Required'
         }

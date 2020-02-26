@@ -35,7 +35,7 @@ const add = async (req, res) => {
 
   try {
     const newPlayer = new Player({
-      agent: user.id,
+      agent: user.username,
       name: body.name,
       origin: body.origin,
       position: body.position,

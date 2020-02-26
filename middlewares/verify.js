@@ -43,7 +43,7 @@ const verifyUser = (req, res, next) => {
   if (agentID === user.id) {
     next()
   } else {
-    Response._401(res, req, 'Authorazation denied')
+    return Response._401(res, req, 'Authorazation denied')
   }
 }
 
@@ -64,7 +64,7 @@ const verifyAgent = async (req, res, next) => {
   if (user.id === player.agent) {
     next()
   } else {
-    Response._401(res, req, 'Authorazation denied')
+    return Response._401(res, req, 'Authorazation denied')
   }
 }
 
@@ -85,7 +85,7 @@ const verifyHook = async (req, res, next) => {
   if (user.username === hook.agent) {
     next()
   } else {
-    Response._401(res, req, 'Authorazation denied')
+    return Response._401(res, req, 'Authorazation denied')
   }
 }
 

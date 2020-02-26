@@ -1,12 +1,15 @@
 const express = require('express')
 const logger = require('morgan')
 const mongoose = require('./config/mongoose')
+const helmet = require('helmet')
 require('dotenv').config()
 
 const PORT = process.env.PORT || 3000
 const VERSION = process.env.VERSION
 
 const app = express()
+
+app.use(helmet())
 
 mongoose.connect().catch(error => {
   console.error(error)

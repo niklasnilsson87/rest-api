@@ -64,6 +64,7 @@ const register = async (req, res) => {
   try {
     const newAgent = new Agent(req.body)
     await newAgent.save()
+
     newAgent.password = undefined
     newAgent.__v = undefined
     Response._201(res, req, 'Successful registration', newAgent)
@@ -147,7 +148,7 @@ const remove = async (req, res) => {
     const deleteAgent = await Agent.deleteOne({ _id: agentID })
     await Player.deleteMany({ owner: agentID })
     if (deleteAgent.deletedCount) {
-      Response._202(res, req, 'Agent deleted')
+      Response._200(res, req, 'Agent deleted')
     } else {
       Response._404(res, req, 'No agent to delete')
     }
