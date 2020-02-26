@@ -48,7 +48,8 @@ app.use((error, req, res, next) => {
   res.status(error.status || 500).json({
     error: {
       message: error.message,
-      requested: req.headers.host + req.originalUrl
+      requested: `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+      root: `${req.protocol}://${req.headers.host}/api`
     }
   })
 })

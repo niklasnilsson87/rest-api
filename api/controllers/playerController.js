@@ -32,6 +32,14 @@ const read = async (req, res) => {
  */
 const add = async (req, res) => {
   const { body, user } = req
+  const { name, origin, position } = body
+
+  if (!name || !origin || !position) {
+    return Response._400(res, req, 'Invalid request payload')
+  }
+
+  const isPlayer = await Player.findOne({ name })
+  if (isPlayer) return Response._400(res, req, 'Player already exist')
 
   try {
     const newPlayer = new Player({
