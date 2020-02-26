@@ -1,0 +1,59 @@
+[
+    {
+      "name": "Alphonso Davies",
+      "origin": "Canada",
+      "position": "Left-Back",
+      "club": "Bayern Munich",
+      "contractTo": "30.06.2023"
+    },
+    {
+      "name": "Christian Eriksen",
+      "origin": "Denmark",
+      "position": "Attacking Midfield",
+      "club": "Inter",
+      "contractTo": "30.06.2024"
+    },
+    {
+      "name": "Bruno Fernandes",
+      "origin": "Portugal",
+      "position": "Attacking Midfield",
+      "club": "Manchester United",
+      "contractTo": "30.06.2025"
+    },
+    {
+      "name": "Erling Haaland",
+      "origin": "Norway",
+      "position": "Centre-Forward",
+      "club": "Borussia Dortmund",
+      "contractTo": "30.06.2024"
+    },
+    {
+      "name": "Neymar",
+      "origin": "Brazil",
+      "position": "Left-Winger",
+      "club": "Paris Saint-Germain",
+      "contractTo": "30.06.2022"
+    },
+    {
+      "name": "Antoine Griezmann",
+      "origin": "France",
+      "position": "Left-Winger",
+      "club": "FC Barcelona",
+      "contractTo": "30.06.2024"
+    },
+    {
+      "name": "Alexander Isak",
+      "origin": "Sweden",
+      "position": "Centre-Forward",
+      "club": "Real Sociedad",
+      "contractTo": "30.06.2024"
+    },
+    {
+      "name": "Robin Quaison",
+      "origin": "Sweden",
+      "position": "Centre-Forward",
+      "club": "1.FSV Mainz 05",
+      "contractTo": "30.06.2021"
+    }
+  ]
+  

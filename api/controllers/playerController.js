@@ -1,5 +1,6 @@
 const Player = require('../models/Player')
 const Response = require('../responses/Response')
+const sendHooks = require('../../lib/sendHooks')
 
 /**
  *
@@ -42,6 +43,8 @@ const add = async (req, res) => {
       contractTo: body.contractTo
     })
     const player = await newPlayer.save()
+
+    sendHooks(user, body, 'added')
 
     Response._201(res, req, 'Player created Successfully', player)
   } catch (error) {

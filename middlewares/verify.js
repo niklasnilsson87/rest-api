@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const Player = require('../api/models/Player')
+const Hook = require('../api/models/Hook')
 require('dotenv').config()
 
 const Response = require('../api/responses/Response')
@@ -8,8 +9,8 @@ const Response = require('../api/responses/Response')
  * Middleware that checks and verify that its the
  * right token that is passed in the header.
  *
- * @param {Request} req
- * @param {Response} res
+ * @param {Object} req
+ * @param {Object} res
  * @param {Next} next
  */
 const verifyToken = (req, res, next) => {
@@ -31,8 +32,8 @@ const verifyToken = (req, res, next) => {
  * Middleware that checks and verify that its the
  * agent that has access to modify.
  *
- * @param {Request} req
- * @param {Response} res
+ * @param {Object} req
+ * @param {Object} res
  * @param {Next} next
  */
 const verifyUser = (req, res, next) => {
@@ -50,8 +51,8 @@ const verifyUser = (req, res, next) => {
  * Middleware that checks and verify that its the
  * agent that has access to update and delete players.
  *
- * @param {Request} req
- * @param {Response} res
+ * @param {Object} req
+ * @param {Object} res
  * @param {Next} next
  */
 const verifyAgent = async (req, res, next) => {
@@ -67,8 +68,30 @@ const verifyAgent = async (req, res, next) => {
   }
 }
 
+/**
+ * Middleware that checks and verify that its the
+ * agent that has access to update and delete hooks.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Next} next
+ */
+const verifyHook = async (req, res, next) => {
+  const { hookID } = req.params
+  const { user } = req
+
+  const hook = await Hook.findById(hookID)
+
+  if (user.username === hook.agent) {
+    next()
+  } else {
+    Response._401(res, req, 'Authorazation denied')
+  }
+}
+
 module.exports = {
   verifyToken,
   verifyUser,
-  verifyAgent
+  verifyAgent,
+  verifyHook
 }

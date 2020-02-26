@@ -33,6 +33,7 @@ app.use((req, res, next) => {
 app.use('/api', require('./api/routes/root'))
 app.use(`/api/${VERSION}/agents`, require('./api/routes/v1/agents'))
 app.use(`/api/${VERSION}/players`, require('./api/routes/v1/players'))
+app.use(`/api/${VERSION}/hooks`, require('./api/routes/v1/hooks'))
 
 app.use((req, res, next) => {
   const error = new Error('Not Found')
