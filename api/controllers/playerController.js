@@ -95,6 +95,9 @@ const update = async (req, res) => {
     const updated = {}
 
     for (const ops of req.body) {
+      if (ops.propName === '_id') {
+        return Response._403(res, req, 'Not allowed')
+      }
       updated[ops.propName] = ops.value
     }
 
