@@ -72,7 +72,7 @@ const remove = async (req, res) => {
   try {
     const deleteAgent = await Hook.deleteOne({ _id: hookID })
     if (deleteAgent.deletedCount) {
-      Response._202(res, req, 'Hook deleted')
+      Response._200(res, req, 'Hook deleted')
     } else {
       Response._404(res, req, 'No hook to delete')
     }
