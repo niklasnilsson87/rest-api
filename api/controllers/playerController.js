@@ -39,7 +39,7 @@ const add = async (req, res) => {
   }
 
   const isPlayer = await Player.findOne({ name })
-  if (isPlayer) return Response._400(res, req, 'Player already exist')
+  if (isPlayer) return Response._409(res, req, 'Player already exist')
 
   try {
     const newPlayer = new Player({
