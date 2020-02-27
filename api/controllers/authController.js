@@ -59,7 +59,7 @@ const register = async (req, res) => {
   }
 
   const agent = await Agent.findOne({ email })
-  if (agent) return Response._400(res, req, 'Agent exist, Email must be unique')
+  if (agent) return Response._409(res, req, 'Agent exist, Email must be unique')
 
   try {
     const newAgent = new Agent(req.body)

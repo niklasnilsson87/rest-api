@@ -43,6 +43,13 @@ Response._403 = (res, req, text) => {
   })
 }
 
+Response._409 = (res, req, text) => {
+  res.status(409).json({
+    message: text,
+    links: links(req)
+  })
+}
+
 Response._500 = (res, req, text) => {
   res.status(500).json({
     message: text,
