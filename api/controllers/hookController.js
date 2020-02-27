@@ -42,7 +42,7 @@ const add = async (req, res) => {
   if (!callbackUrl) return Response._400(res, req, 'Invalid request payload')
 
   const hook = await Hook.findOne({ callbackUrl })
-  if (hook) return Response._400(res, req, 'Callback already registered, URI must be unique')
+  if (hook) return Response._409(res, req, 'Callback already registered, URI must be unique')
 
   const validate = await validateUrl(callbackUrl)
   if (validate === true) {
