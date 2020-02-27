@@ -1,0 +1,1642 @@
+{
+	"info": {
+		"_postman_id": "7e9c7fa0-c814-40d6-a732-d37e16ebec63",
+		"name": "REST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Application Root",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3a39d9a7-f869-405c-a26d-dd215f69abd6",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api-1dv527.herokuapp.com/api",
+					"protocol": "https",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api"
+					]
+				},
+				"description": "Root of the Api. Meta data with information on author, access, version and auth-description"
+			},
+			"response": []
+		},
+		{
+			"name": "No route found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3812935c-9e6e-40fa-a9b9-d88579be0ff7",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api-1dv527.herokuapp.com/api/v4/test",
+					"protocol": "https",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v4",
+						"test"
+					]
+				},
+				"description": "Error handling if no route found\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Register Agent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dbcf0826-010f-4a93-b80b-70446c1c6dd6",
+						"exec": [
+							"let jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"id\", jsonData.payload._id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"TestAgent\",\n\t\"password\": \"{{pwd}}\",\n\t\"email\": \"test@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/register",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"register"
+					]
+				},
+				"description": "Register agent to get access to the restricted parts of the api"
+			},
+			"response": []
+		},
+		{
+			"name": "Register same agent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "aaae0bd3-5cd2-4aa5-9eef-6cb0b8460d21",
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"TestAgent\",\n\t\"password\": \"{{pwd}}\",\n\t\"email\": \"test@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/register",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"register"
+					]
+				},
+				"description": "Try to register the same agent"
+			},
+			"response": []
+		},
+		{
+			"name": "Register without requested fields",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e117079a-b0da-4b0d-a0a3-7e9e9ab76721",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"TestAgent\",\n\t\"password\": \"{{pwd}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/register",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"register"
+					]
+				},
+				"description": "Try to register without requested fields"
+			},
+			"response": []
+		},
+		{
+			"name": "Login Agent wrong password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "24f923e0-6547-46f5-8597-6d44e7c017d3",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"TestAgent\",\n\t\"password\": \"wrongpassword\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/login",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"login"
+					]
+				},
+				"description": "Try to login with wrong password\ninput:\n\n{\n\tusername: TestAgent, password: wrongPassword\n}"
+			},
+			"response": []
+		},
+		{
+			"name": "Login Agent without a username",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "24f923e0-6547-46f5-8597-6d44e7c017d3",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"password\": \"{{pwd}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/login",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"login"
+					]
+				},
+				"description": "Try to login with wrong password\ninput:\n\n{\n\tpassword: wrongPassword\n}"
+			},
+			"response": []
+		},
+		{
+			"name": "Login Agent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "24f923e0-6547-46f5-8597-6d44e7c017d3",
+						"exec": [
+							"let jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"token\", jsonData.payload);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"TestAgent\",\n\t\"password\": \"{{pwd}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/login",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"login"
+					]
+				},
+				"description": "Login to recive a token from payload"
+			},
+			"response": []
+		},
+		{
+			"name": "View agents",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "382a7205-beed-4ebc-9c93-6221334caa0c",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents"
+					]
+				},
+				"description": "View all registered agents, no token needed"
+			},
+			"response": []
+		},
+		{
+			"name": "View single agent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "00fa1814-3d7a-4fae-ae4d-f85dead7594b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/{{id}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"{{id}}"
+					]
+				},
+				"description": "View a single agent. Access with token in authorization header"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Agent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "da394e1c-4fac-43bd-9479-c70c631994c2",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[ \n\t{ \"propName\": \"username\", \"value\": \"TestAgent\" },\n\t{ \"propName\": \"email\", \"value\": \"test@gmail.com\" }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/{{id}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"{{id}}"
+					]
+				},
+				"description": "Update agents email and name in a patch request\ninput:\n\n[ \n\t{ propName: name, value: updatedTestAgent },\n\t{ propName: email, value: updatedTestAgent@gmail.com } \n]"
+			},
+			"response": []
+		},
+		{
+			"name": "Fail to update password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bce3820c-169b-4b22-bbf8-c5ec37395ea1",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[ \n\t{ \"propName\": \"password\", \"value\": \"updatedPassword\" }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/{{id}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"{{id}}"
+					]
+				},
+				"description": "Update agents email and name in a patch request\ninput:\n\n[ \n\t{ propName: password, value: updatedPassword }\n]"
+			},
+			"response": []
+		},
+		{
+			"name": "Fail to update another agent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8699e973-9420-40d5-979b-e88c05800ae1",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[ \n\t{ \"propName\": \"username\", \"value\": \"TestAgent\" },\n\t{ \"propName\": \"email\", \"value\": \"test@gmail.com\" }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/5e569ca91012262ba0423990",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"5e569ca91012262ba0423990"
+					]
+				},
+				"description": "Update agents email and name in a patch request\ninput:\n\n[ \n\t{ propName: name, value: updatedTestAgent },\n\t{ propName: email, value: updatedTestAgent@gmail.com } \n]"
+			},
+			"response": []
+		},
+		{
+			"name": "View all players",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ccb734b4-d909-4413-bd80-dfab47cda898",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players"
+					]
+				},
+				"description": "View all registered players"
+			},
+			"response": []
+		},
+		{
+			"name": "View details about another agents player",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b2215496-f273-41b8-8b93-ac278523d0ae",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/5e569ca91012262ba042398a",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"5e569ca91012262ba042398a"
+					]
+				},
+				"description": "Try to view details about another agent player "
+			},
+			"response": []
+		},
+		{
+			"name": "Add new Player",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4bef2bd8-31f3-42b4-9b96-2a2fc083add2",
+						"exec": [
+							"let jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"playerID\", jsonData.payload._id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Zlatan Ibrahimovic\",\n\t\"origin\": \"Sweden\",\n\t\"position\": \"Centre-Forward\",\n\t\"club\": \"AC Milan\",\n\t\"contractTo\": \"30.06.2024\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players"
+					]
+				},
+				"description": "Add a new Player to agents stall, club and contractTo is not required."
+			},
+			"response": []
+		},
+		{
+			"name": "View details about one player",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ce0de48f-1f33-436a-bc2c-9968564218ab",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/{{playerID}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"{{playerID}}"
+					]
+				},
+				"description": "View detailed information about a player"
+			},
+			"response": []
+		},
+		{
+			"name": "Add same Player",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bf871d0b-1f79-457c-a79d-fb36b84ac77f",
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Zlatan Ibrahimovic\",\n\t\"origin\": \"Sweden\",\n\t\"position\": \"Centre-Forward\",\n\t\"contractTo\": \"30.06.2024\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players"
+					]
+				},
+				"description": "trying to add the same player again"
+			},
+			"response": []
+		},
+		{
+			"name": "Add player without token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "edb029de-4678-46f2-b8bd-d0147f759470",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Zlatan Svensson\",\n\t\"origin\": \"Sweden\",\n\t\"position\": \"Centre-Forward\",\n\t\"contractTo\": \"30.06.2024\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players"
+					]
+				},
+				"description": "trying to add player without token"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Player",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e098ad08-8f1b-4841-9a98-baef0b851924",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[ \n\t{ \"propName\": \"club\", \"value\": \"Hammarby\" }\n]\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/{{playerID}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"{{playerID}}"
+					]
+				},
+				"description": "Patch request to update a player values"
+			},
+			"response": []
+		},
+		{
+			"name": "Update another agents player",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e098ad08-8f1b-4841-9a98-baef0b851924",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[ \n\t{ \"propName\": \"name\", \"value\": \"Nils Fröling\" }\n]\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/5e569ca91012262ba0423988",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"5e569ca91012262ba0423988"
+					]
+				},
+				"description": "Try to update another agents player"
+			},
+			"response": []
+		},
+		{
+			"name": "Update players id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e098ad08-8f1b-4841-9a98-baef0b851924",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[ \n\t{ \"propName\": \"_id\", \"value\": \"1235123\" }\n]\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/{{playerID}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"{{playerID}}"
+					]
+				},
+				"description": "Try to update a players database _id"
+			},
+			"response": []
+		},
+		{
+			"name": "Update player, wrong json format",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e098ad08-8f1b-4841-9a98-baef0b851924",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n\t\"propName\": \"name\", \"value\": \"testingPilot\" \n}\n\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/{{playerID}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"{{playerID}}"
+					]
+				},
+				"description": "Try to update a player, input format is invalid"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete agents player",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "307c77ca-81b1-44e5-8e60-ab3852ff960b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/{{playerID}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"{{playerID}}"
+					]
+				},
+				"description": "Deleteing agents own player"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete agents player without token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "58f681ca-deed-487d-ac0d-a4d155b0a787",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/{{playerID}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"{{playerID}}"
+					]
+				},
+				"description": "Deleteing agents own player without token"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete another agents player",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "58f681ca-deed-487d-ac0d-a4d155b0a787",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/players/5e569ca91012262ba0423987",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"players",
+						"5e569ca91012262ba0423987"
+					]
+				},
+				"description": "Try to delete another agents player"
+			},
+			"response": []
+		},
+		{
+			"name": "Add hook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9184336b-876b-4254-bb84-8a3e920ccfbc",
+						"exec": [
+							"let jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"hookID\", jsonData.payload._id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"callbackUrl\": \"http://dummy.restapiexample.com/api/v1/create\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/hooks",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"hooks"
+					]
+				},
+				"description": "Add hook to notify when agents adds players to their stall"
+			},
+			"response": []
+		},
+		{
+			"name": "Add same hook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9184336b-876b-4254-bb84-8a3e920ccfbc",
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"callbackUrl\": \"http://dummy.restapiexample.com/api/v1/create\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/hooks",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"hooks"
+					]
+				},
+				"description": "Try to add the same url"
+			},
+			"response": []
+		},
+		{
+			"name": "View all hooks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a1708f3f-65f2-4c32-9781-ac1116543c04",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/hooks",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"hooks"
+					]
+				},
+				"description": "View all hooks"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete hook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "345eed6c-6492-45ae-8edc-50b498458a19",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/hooks/{{hookID}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"hooks",
+						"{{hookID}}"
+					]
+				},
+				"description": "Delete your own hook"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete another Agent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c07c5f41-62da-4cd5-9ce6-c5d375f767c1",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/5e569ca91012262ba0423990",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"5e569ca91012262ba0423990"
+					]
+				},
+				"description": "Try to delete another agent"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Agent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "14df6ff3-5e65-4ca2-a075-5dc91088c03e",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api-1dv527.herokuapp.com/api/v1/agents/{{id}}",
+					"protocol": "http",
+					"host": [
+						"api-1dv527",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"agents",
+						"{{id}}"
+					]
+				},
+				"description": "Delete logged in agent"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
