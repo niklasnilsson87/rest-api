@@ -11,11 +11,6 @@ const {
 
 router.get('/', verifyToken, read)
 
-router.post('/test', (res, req) => {
-  console.log(req)
-  res.send('OK')
-})
-
 router.post('/', verifyToken, add)
 
 router.get('/:playerID', verifyToken, verifyAgent, single)
